@@ -1,0 +1,108 @@
+<html>
+<head>
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<style>
+.pixel2 {
+	background: red;
+	height: 40px;
+	width: 60px;
+	float: left;
+	margin-right: 15px;
+}
+
+.pixel3 {
+	background: yellow;
+	height: 40px;
+	width: 60px;
+	float: left;
+	margin-right: 15px;
+}
+
+.pixel {
+	background: green;
+	height: 40px;
+	width: 60px;
+	float: left;
+	margin-right: 15px;
+}
+
+#container {
+	height: 40px;
+	width: 900px;
+	margin-left: 0;
+	overflow: visible;
+
+}
+#frame {
+	width: 135px;
+	height: 40px;
+	margin-left: 200px;
+	overflow: hidden;
+}
+
+#button {
+	margin-top: 20px;	
+}
+</style>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		function setCSS3Transitions($element, animationText) {
+			$element.css({
+				'transition': animationText,
+				'-webkit-transition': animationText,
+				'-moz-transition': animationText,
+				'-ms-transition': animationText,
+				'-o-transition': animationText
+			});
+		};
+		var currIndex = 0, length, shown = 2, childSelector = "div", shifting = 75, duration = '450';
+		var $containerTemp, $container = $("#container");
+		length = $container.find(childSelector).length;
+		
+		setCSS3Transitions($container, 'margin-left '+duration+'ms ease-out');
+		// Injecting the last show childs
+		$container.find(childSelector+":last").after($container.find(childSelector+":lt("+shown+")").clone());
+
+		$("input[type='button']").on('click', function(){
+			if (currIndex === length) {
+				window.setTimeout(function() {
+					setCSS3Transitions($container, '');
+					window.setTimeout(function(){
+						currIndex = 0;
+						$container.css('marginLeft', 0);
+						window.setTimeout(function(){
+							setCSS3Transitions($container, 'margin-left '+duration+'ms ease-out');
+							window.setTimeout(function(){
+								currIndex++;
+								$container.css('marginLeft', -(currIndex * shifting));
+							}, 0);
+						}, 0);
+					}, 0);
+				}, 0);
+			} else {
+				currIndex++;
+				$container.css('marginLeft', -(currIndex * shifting));
+			}
+		});
+
+/*		window.setInterval(function() {
+			$("input[type='button']").trigger('click');
+		}, 1500);*/
+	});
+</script>
+</head>
+
+<body>
+	<div id="frame">
+		<div id="container">
+			<div class="pixel">1</div>
+			<div class="pixel2">2</div>
+			<div class="pixel">3</div>
+			<div class="pixel">4</div>
+			<div class="pixel3">5</div>
+		</div>
+	</div>
+	<div id="button"><input type="button" value="Click me!" /></div>
+</body>
+</html>
