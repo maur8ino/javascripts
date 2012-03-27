@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Backbone.js Sandbox</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<script src="http://code.jquery.com/jquery.min.js"></script>
+	<script src="http://documentcloud.github.com/underscore/underscore.js"></script>
+	<script src="http://documentcloud.github.com/backbone/backbone.js"></script>
+	
+</head>
+<body>
+	<script type="text/template" id="tpl-film-details">
+		<label>Id:</label>
+		<input type="text" id="film_id" name="film_id" value="<%= film_id %>" disabled />
+		<label>Title:</label>
+		<input type="text" id="title" name="title" value="<%= title %>" required/>
+		<label>Description:</label>
+		<input type="text" id="description" name="description" value="<%= description %>" />
+		<label>Rating:</label>
+		<input type="text" id="rental_rate" name="rental_rate" value="<%= rental_rate %>" />
+	</script>
+
+	<script type="text/javascript">
+		(function($) {
+			// Models
+			window.Film = Backbone.Model.extend();
+
+			window.FilmCollection = Backbone.Collection.extend({
+				model:Film,
+				url: "api/films"
+			});
+
+			window.FilmListView = Backbone.View.extend({
+
+				tagName:'ul',
+
+				initialize:function () {
+					this.model.bind("reset", this.render, this);
+				},
+
+				render:function (eventName) {
+					_.each(this.model.models, function (film) {
+						this.$el.append(new FilmView({model: Film}).render().el);
+					}, this);
+					return this;
+				}
+
+			});
+			
+			window.FilmView = Backbone.View.extend({
+				template:_.template($('#tpl-film-details').html()),
+
+				render:function (eventName) {
+					this.$el.html(this.template(this.model.toJSON()));
+					return this;
+				}
+			});
+
+			// Router
+			var AppRouter = Backbone.Router.extend({
+
+				routes:{
+					"":"list",
+				},
+
+				list: function () {
+					this.filmList = new FilmCollection();
+					this.filmList.fetch();
+				},
+			});
+
+			var app = new AppRouter();
+			Backbone.history.start();
+
+		})(jQuery);
+	</script>
+</body>
+</html>
