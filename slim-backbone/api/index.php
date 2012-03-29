@@ -31,7 +31,7 @@ function jsonpWrap($jsonp) {
 }
 
 $app->get('/films', function () use ($app) {
-	$sql = "select * FROM film ORDER BY title";
+	$sql = "select * FROM film ORDER BY title LIMIT 15";
 	try {
 		$db = getConnection();
 		$stmt = $db->query($sql);
@@ -39,7 +39,7 @@ $app->get('/films', function () use ($app) {
 		$db = null;
 		$app->response()->body(jsonpWrap('{"films": ' . json_encode($films) . '}'));
 	} catch(PDOException $e) {
-		$app->response()->body(jsonpWrap('{"error":{"text":'. $e->getMessage() .'}}'));
+		$app->response()->body(jsonpWrap('{"error": {"text":'. $e->getMessage() .'}}'));
 	}
 });
 
@@ -54,7 +54,7 @@ $app->get('/film/:id', function ($id) use ($app) {
 		$db = null;
 		$app->response()->body(jsonpWrap(json_encode($film)));
 	} catch(PDOException $e) {
-		$app->response()->body(jsonpWrap('{"error":{"text":'. $e->getMessage() .'}}'));
+		$app->response()->body(jsonpWrap('{"error": {"text":'. $e->getMessage() .'}}'));
 	}
 });
 
@@ -69,7 +69,7 @@ $app->get('/film/search/:title', function ($title) use ($app) {
 		$db = null;
 		$app->response()->body(jsonpWrap(json_encode($films)));
 	} catch(PDOException $e) {
-		$app->response()->body(jsonpWrap('{"error":{"text":'. $e->getMessage() .'}}'));
+		$app->response()->body(jsonpWrap('{"error": {"text":'. $e->getMessage() .'}}'));
 	}
 });
 

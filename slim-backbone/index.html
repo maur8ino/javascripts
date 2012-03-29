@@ -9,38 +9,60 @@
 	
 </head>
 <body>
-	<script type="text/template" id="tpl-film-details">
+	<script type="text/template" id="tpl-film-item">
 		<label>Id:</label>
-		<input type="text" id="film_id" name="film_id" value="<%= film_id %>" disabled />
+		<input type="text" class="film_id" data-film_id="<%=film_id%>" id="film_id_<%=film_id%>" name="film_id_<%=film_id%>" value="<%=film_id%>" disabled />
 		<label>Title:</label>
-		<input type="text" id="title" name="title" value="<%= title %>" required/>
+		<input type="text" class="title" data-title="<%=title%>" id="title_<%=film_id%>" name="title_<%=film_id%>" value="<%=title%>" required/>
 		<label>Description:</label>
-		<input type="text" id="description" name="description" value="<%= description %>" />
+		<input type="text" id="description_<%=film_id%>" name="description_<%=film_id%>" value="<%= description %>" />
 		<label>Rating:</label>
-		<input type="text" id="rental_rate" name="rental_rate" value="<%= rental_rate %>" />
+		<input type="text" id="rental_rate_<%=film_id%>" name="rental_rate_<%=film_id%>" value="<%= rental_rate %>" />
 	</script>
+	<script type="text/template" id="tpl-film-details">
+		Description: <%=description%><br/>
+		Year: <%=release_year%>
+	</script>
+	
+	<script type="text/template" id="tpl-tweet-item">
+		<a href="#tweet/<%=id%>">
+			<img src="<%=profile_image_url%>"/>
+			<%=from_user%> <% if (from_user_name !== '') { %> (<%=from_user_name%>)<% } %>
+		</a>
+	</script>
+	<script type="text/template" id="tpl-tweet-details">
+		<%=text%>
+	</script>
+
+	<div id="container">
+	</div>
+	<div id="containerDetail">
+	</div>
 
 	<script type="text/javascript">
 		(function($) {
+
 			// Models
 			window.Film = Backbone.Model.extend();
 
 			window.FilmCollection = Backbone.Collection.extend({
-				model:Film,
-				url: "api/films"
+				model: Film,
+				url: "api/films",
+				parse: function(resp, xhr) {
+					return _.map(resp.films, function(film) {
+						return _.extend(film, { id: film.film_id });
+					});
+				}
 			});
 
 			window.FilmListView = Backbone.View.extend({
-
-				tagName:'ul',
-
-				initialize:function () {
+				tagName: 'ul',
+				initialize: function() {
 					this.model.bind("reset", this.render, this);
 				},
-
-				render:function (eventName) {
+				render: function(eventName) {
 					_.each(this.model.models, function (film) {
-						this.$el.append(new FilmView({model: Film}).render().el);
+						this.$el.append(new FilmView({model: film}).render().el);
 					}, this);
 					return this;
 				}
@@ -48,9 +70,18 @@
 			});
 			
 			window.FilmView = Backbone.View.extend({
-				template:_.template($('#tpl-film-details').html()),
+				tagName: 'li',
+				template: _.template($('#tpl-film-item').html()),
+				render: function(eventName) {
+					this.$el.html(this.template(this.model.toJSON()));
+					return this;
+				}
+			});
 
-				render:function (eventName) {
+			window.FilmDetailsView = Backbone.View.extend({
+				tagName: 'div',
+				template: _.template($('#tpl-film-details').html()),
+				render: function(eventName) {
 					this.$el.html(this.template(this.model.toJSON()));
 					return this;
 				}
@@ -59,17 +90,121 @@
 			// Router
 			var AppRouter = Backbone.Router.extend({
 
-				routes:{
-					"":"list",
+
+				initialize: function(options) {
+					var that = this;
+					this.filmListFetched = function() {
+						that.filmList = new FilmCollection();
+						return that.filmList.fetch({dataType: 'jsonp'});
+					}
+					this.list();
+				},
+
+				routes: {
+					"": "list",
+					"film/:id": "getFilmDetails"
 				},
 
 				list: function () {
-					this.filmList = new FilmCollection();
-					this.filmList.fetch();
-				},
+					var that = this;
+					$.when(this.filmListFetched()).done(function() {
+						that.filmListView = new FilmListView({ model: that.filmList });
+	 					$('#container').html(that.filmListView.render().el)
+					});
+ 				},
+
+ 				getFilmDetails: function(id) {
+					var that = this;
+					$.when(this.filmListFetched()).done(function() {
+	 					that.filmDetails = that.filmList.get(id);
+	 					that.filmDetailsView = new FilmDetailsView({ model: that.filmDetails });
+	 					$('#containerDetail').html(that.filmDetailsView.render().el);
+					});
+ 				}
 			});
 
 			var app = new AppRouter();
+
+			$('#container').on('click', 'input.title', function(e) {
+				window.location.hash = 'film/' + $(this).siblings('.film_id').data('film_id');
+			});
+
+/*
+			window.Tweet = Backbone.Model.extend();
+			window.TweetCollection = Backbone.Collection.extend({
+				model: Tweet,
+				url: "api/films",
+				parse: function(resp, xhr) {
+					return resp.films;
+				}
+			});
+			window.TweetListView = Backbone.View.extend({
+				tagName: 'ul',
+
+				initialize: function() {
+					this.model.bind("reset", this.render, this);
+				},
+
+				render: function(eventName) {
+					_.each(this.model.models, function (tweet) {
+						this.$el.append(new TweetView({model: tweet}).render().el);
+					}, this);
+					return this;
+				}
+			});
+			window.TweetView = Backbone.View.extend({
+				tagName: 'li',
+
+				template: _.template($('#tpl-tweet-item').html()),
+
+				render: function(eventName) {
+					this.$el.html(this.template(this.model.toJSON()));
+					return this;
+				}
+			});
+			window.TweetDetailsView = Backbone.View.extend({
+				template: _.template($('#tpl-tweet-details').html()),
+
+				render: function(eventName) {
+					this.$el.html(this.template(this.model.toJSON()));
+					return this;
+				}
+			});
+			var AppRouterTwitter = Backbone.Router.extend({
+
+				initialize: function(options) {
+					var that = this;
+					this.tweetListFetched = function() {
+						that.tweetList = new TweetCollection();
+						return that.tweetList.fetch({dataType: 'jsonp'});
+					}
+				},
+
+				routes: {
+					"": "list",
+					"tweet/:id": "getTweetDetails"
+				},
+
+				list: function () {
+					var that = this;
+					$.when(this.tweetListFetched()).done(function() {
+						that.tweetListView = new TweetListView({ model: that.tweetList });
+	 					$('#container').html(that.tweetListView.render().el);
+					});
+ 				},
+
+ 				getTweetDetails: function(id) {
+					var that = this;
+					$.when(this.tweetListFetched()).done(function() {
+	 					that.tweetDetails = that.tweetList.get(id);
+	 					that.tweetDetailsView = new TweetDetailsView(that.tweetDetails);
+	 					$('#containerDetail').html(that.tweetDetailsView.render().el);
+					});
+ 				}
+			});
+			
+			appTwitter = new AppRouterTwitter();
+*/
 			Backbone.history.start();
 
 		})(jQuery);
