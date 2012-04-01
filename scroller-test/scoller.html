@@ -1,6 +1,7 @@
 <html>
 <head>
 <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="jquery.transit.min.js"></script>
 <style>
 .pixel2 {
 	background: red;
@@ -31,6 +32,7 @@
 	width: 900px;
 	margin-left: 0;
 	overflow: visible;
+	position: relative;
 
 }
 #frame {
@@ -38,6 +40,7 @@
 	height: 40px;
 	margin-left: 200px;
 	overflow: hidden;
+	position: absolute;
 }
 
 #button {
@@ -47,48 +50,23 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		function setCSS3Transitions($element, animationText) {
-			$element.css({
-				'transition': animationText,
-				'-webkit-transition': animationText,
-				'-moz-transition': animationText,
-				'-ms-transition': animationText,
-				'-o-transition': animationText
-			});
-		};
-		var currIndex = 0, length, shown = 2, childSelector = "div", shifting = 75, duration = '450';
-		var $containerTemp, $container = $("#container");
+
+		var length, shown = 2, childSelector = "div", shifting = 75, duration = '450';
+		var $container = $("#container");
 		length = $container.find(childSelector).length;
 		
-		setCSS3Transitions($container, 'margin-left '+duration+'ms ease-out');
 		// Injecting the last show childs
-		$container.find(childSelector+":last").after($container.find(childSelector+":lt("+shown+")").clone());
+		length = $container.find(childSelector).length;
+		$container.find(childSelector+":first").before($container.find(childSelector+":last"));
+		$container.css({'left': -shifting});
 
 		$("input[type='button']").on('click', function(){
-			if (currIndex === length) {
-				window.setTimeout(function() {
-					setCSS3Transitions($container, '');
-					window.setTimeout(function(){
-						currIndex = 0;
-						$container.css('marginLeft', 0);
-						window.setTimeout(function(){
-							setCSS3Transitions($container, 'margin-left '+duration+'ms ease-out');
-							window.setTimeout(function(){
-								currIndex++;
-								$container.css('marginLeft', -(currIndex * shifting));
-							}, 0);
-						}, 0);
-					}, 0);
-				}, 0);
-			} else {
-				currIndex++;
-				$container.css('marginLeft', -(currIndex * shifting));
-			}
+			$container.find(childSelector+":last").after($container.find(childSelector+":first"));
+			$container.css({'left': '+=' + shifting});
+			$container.transit({'left': '-=' + shifting}, duration, function() {
+			});
 		});
 
-/*		window.setInterval(function() {
-			$("input[type='button']").trigger('click');
-		}, 1500);*/
 	});
 </script>
 </head>
