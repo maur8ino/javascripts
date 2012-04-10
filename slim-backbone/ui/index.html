@@ -3,37 +3,28 @@
 <head>
 	<title>Backbone.js Sandbox</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-	<script src="http://code.jquery.com/jquery.min.js"></script>
+	<script src="http://code.jquery.com/jquery.js"></script>
 	<script src="http://documentcloud.github.com/underscore/underscore.js"></script>
 	<script src="http://documentcloud.github.com/backbone/backbone.js"></script>
-	
+	<script src="https://raw.github.com/janl/mustache.js/master/mustache.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="http://localhost/javascripts/slim-backbone/css/reset-min.css" />
+	<link rel="stylesheet" type="text/css" href="http://localhost/javascripts/slim-backbone/css/backbone.css" />
 </head>
 <body>
-	<script type="text/template" id="tpl-film-item">
-		<label>Id:</label>
-		<input type="text" class="film_id" data-film_id="<%=film_id%>" id="film_id_<%=film_id%>" name="film_id_<%=film_id%>" value="<%=film_id%>" disabled />
-		<label>Title:</label>
-		<input type="text" class="title" data-title="<%=title%>" id="title_<%=film_id%>" name="title_<%=film_id%>" value="<%=title%>" required/>
-		<label>Description:</label>
-		<input type="text" id="description_<%=film_id%>" name="description_<%=film_id%>" value="<%= description %>" />
-		<label>Rating:</label>
-		<input type="text" id="rental_rate_<%=film_id%>" name="rental_rate_<%=film_id%>" value="<%= rental_rate %>" />
+	<script type="text/template" id="tpl-film-item-ms">
+		<li data-film_id="{{film_id}}">{{title}}</li>
 	</script>
-	<script type="text/template" id="tpl-film-details">
-		Description: <%=description%><br/>
-		Year: <%=release_year%>
-	</script>
-	
-	<script type="text/template" id="tpl-tweet-item">
-		<a href="#tweet/<%=id%>">
-			<img src="<%=profile_image_url%>"/>
-			<%=from_user%> <% if (from_user_name !== '') { %> (<%=from_user_name%>)<% } %>
-		</a>
-	</script>
-	<script type="text/template" id="tpl-tweet-details">
-		<%=text%>
+	<script type="text/template" id="tpl-film-details-ms">
+		Description: {{description}}<br/>
+		Year: {{release_year}}
 	</script>
 
+	<div id="searchBox">
+		<form>
+			<input id="search" />
+		</form>
+	</div>
 	<div id="container">
 	</div>
 	<div id="containerDetail">
@@ -47,7 +38,7 @@
 
 			window.FilmCollection = Backbone.Collection.extend({
 				model: Film,
-				url: "api/films",
+				url: "http://localhost/javascripts/slim-backbone/api/films",
 				parse: function(resp, xhr) {
 					return _.map(resp.films, function(film) {
 						return _.extend(film, { id: film.film_id });
@@ -57,6 +48,7 @@
 
 			window.FilmListView = Backbone.View.extend({
 				tagName: 'ul',
+				className: 'test',
 				initialize: function() {
 					this.model.bind("reset", this.render, this);
 				},
@@ -70,19 +62,23 @@
 			});
 			
 			window.FilmView = Backbone.View.extend({
-				tagName: 'li',
-				template: _.template($('#tpl-film-item').html()),
 				render: function(eventName) {
-					this.$el.html(this.template(this.model.toJSON()));
+					this.$el.html(Mustache.render($('#tpl-film-item-ms').html(), this.model.toJSON()));
 					return this;
+				},
+				events: {
+					'click': 'showFilmDetails'
+				},
+				showFilmDetails: function() {
+					app.navigate('film/' + this.model.id, {trigger: true});
+					return false
 				}
 			});
 
 			window.FilmDetailsView = Backbone.View.extend({
 				tagName: 'div',
-				template: _.template($('#tpl-film-details').html()),
 				render: function(eventName) {
-					this.$el.html(this.template(this.model.toJSON()));
+					this.$el.html(Mustache.render($('#tpl-film-details-ms').html(), this.model.toJSON()));
 					return this;
 				}
 			});
@@ -102,7 +98,6 @@
 
 				initialize: function(options) {
 					this.filmList = new FilmCollection();
-					this.list();
 				},
 
 				routes: {
@@ -114,26 +109,29 @@
 					var that = this;
 					this.filmListFetched().done(function() {
 						that.filmListView = new FilmListView({ model: that.filmList });
-	 					$('#container').html(that.filmListView.render().el)
+						$('#container').html(that.filmListView.render().el)
 					});
  				},
 
  				getFilmDetails: function(id) {
 					var that = this;
+					if ($('#container').html().trim() === '') {
+						this.list();
+					}
 					this.filmListFetched().done(function() {
-	 					that.filmDetails = that.filmList.get(id);
-	 					that.filmDetailsView = new FilmDetailsView({ model: that.filmDetails });
-	 					$('#containerDetail').html(that.filmDetailsView.render().el);
+						that.filmDetails = that.filmList.get(id);
+						that.filmDetailsView = new FilmDetailsView({ model: that.filmDetails });
+						$('#containerDetail').html(that.filmDetailsView.render().el);
 					});
  				}
 			});
 
 			app = new AppRouter();
 
-			$('#container').on('click', 'input.title', function(e) {
-				window.location.hash = 'film/' + $(this).siblings('.film_id').data('film_id');
+/*			$('#container').on('click', 'li', function(e) {
+				app.navigate('film/' + $(this).data('film_id'), {replace: true});
 			});
-
+*/
 /*
 			window.Tweet = Backbone.Model.extend();
 			window.TweetCollection = Backbone.Collection.extend({
@@ -210,7 +208,7 @@
 			
 			appTwitter = new AppRouterTwitter();
 */
-			Backbone.history.start();
+			Backbone.history.start({ pushState: true, root: "/javascripts/slim-backbone/ui/"});
 
 		})(jQuery);
 	</script>
