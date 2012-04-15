@@ -3,7 +3,7 @@
 	window.Album = Backbone.Model.extend({
 
 		isFirstTrack: function(index) {
-			return index == 0;
+			return index === 0;
 		},
 
 		isLastTrack: function(index) {
