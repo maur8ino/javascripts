@@ -205,12 +205,12 @@ body {
 }
 
 #container {
-  width: 960px;
+  /*width: 960px;*/
   margin: auto;
   min-height: 500px;
   background: #fff;
 }
-#menu {
+/*#menu {
   background: #444;
   height: 30px; color: #fff; text-align: right;
 }
@@ -229,7 +229,7 @@ body {
 }
 #menu ul li a:hover {
   color: #ccc;
-}
+}*/
 #container {
 
 }

@@ -1,12 +1,13 @@
 // Filename: router.js
 define([
 	'jquery',
+	'jquerymobile',
 	'underscore',
 	'backbone',
 	'views/home/main',
 	'views/projects/list',
 	'views/users/list'
-	], function($, _, Backbone, mainHomeView, projectListView, userListView ){
+	], function($, jQm, _, Backbone, mainHomeView, projectListView, userListView ){
 		var AppRouter = Backbone.Router.extend({
 			routes: {
 			// Define some URL routes
@@ -32,11 +33,22 @@ define([
 		}
 	});
 
-		var initialize = function(){
-			var app_router = new AppRouter();
-			Backbone.history.start();
-		};
-		return {
-			initialize: initialize
-		};
+	var initialize = function(){
+		var app_router = new AppRouter();
+		Backbone.history.start();
+	};
+
+	$('#menu').on('click', 'a', function() {
+		var url = $(this).attr('href');
+		if (url.indexOf('#') > 0) {
+			var effect = 'slideup',
+				reverse = false,
+				changeHash = false;
+
+			$.mobile.changePage( url , { transition: effect}, reverse, changeHash );
+		}
 	});
+	return {
+		initialize: initialize
+	};
+});
