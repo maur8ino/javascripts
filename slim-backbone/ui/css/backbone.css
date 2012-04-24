@@ -3,3 +3,15 @@
 	margin: 5px 0;
 	background-color: limegreen;
 }
+form label {
+	margin-left: 5px;
+}
+
+a, a:visited {
+	text-decoration: none;
+	color: #00e;
+}
+
+a:active, a:hover {
+	color: #fff;
+}

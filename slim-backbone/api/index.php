@@ -61,13 +61,14 @@ $app->get('/film/:id', function ($id) use ($app) {
 $app->get('/film/search/:title', function ($title) use ($app) {
 	$sql = "SELECT * FROM film WHERE title like CONCAT('%',:title,'%')";
 	try {
+		$title_decoded = urldecode($title);
 		$db = getConnection();
 		$stmt = $db->prepare($sql);
-		$stmt->bindParam("title", $title);
+		$stmt->bindParam("title", $title_decoded);
 		$stmt->execute();
 		$films = $stmt->fetchAll(PDO::FETCH_OBJ);
 		$db = null;
-		$app->response()->body(jsonpWrap(json_encode($films)));
+		$app->response()->body(jsonpWrap('{"films": ' . json_encode($films) . '}'));
 	} catch(PDOException $e) {
 		$app->response()->body(jsonpWrap('{"error": {"text":'. $e->getMessage() .'}}'));
 	}

@@ -1,6 +1,6 @@
 // Filename: router.js
-define(['jquery', 'underscore', 'backbone', 'collections/films', 'views/film', 'views/filmDetail', 'views/filmList'],
-	function($, _, Backbone, filmCollection, filmView, filmDetailView, filmListView){
+define(['jquery', 'underscore', 'backbone', 'collections/films', 'views/film', 'views/filmDetail', 'views/filmList', 'search'],
+	function($, _, Backbone, filmCollection, filmView, filmDetailView, filmListView, $search){
 		var AppRouter = Backbone.Router.extend({
 
 			filmListFetched: function() {
@@ -15,7 +15,8 @@ define(['jquery', 'underscore', 'backbone', 'collections/films', 'views/film', '
 
 			routes: {
 				"": "list",
-				"film/:id": "getFilmDetails"
+				"film/:id": "getFilmDetails",
+				"film/search/:name": "getSearch"
 			},
 
 			list: function () {
@@ -35,6 +36,19 @@ define(['jquery', 'underscore', 'backbone', 'collections/films', 'views/film', '
 					that.filmDetails = that.filmList.get(id);
 					that.filmDetailView = new filmDetailView({ model: that.filmDetails });
 					$('#containerDetail').html(that.filmDetailView.render().el);
+				});
+			},
+			getSearch: function(name) {
+				var that = this,
+					filmCollectionSearch = filmCollection.extend({url: "../api/film/search/" + name});
+				this.filmList = new filmCollectionSearch();
+				$search.val(unescape(name));
+				$search.css('background', 'red');
+				this.filmListFetched().done(function() {
+					that.list();
+					$search.css('background', 'none');
+					$("label[for='" + $search.attr('id') + "']").html(that.filmList.length + ' result(s)');
+					$('#containerDetail').html('');
 				});
 			}
 		});
