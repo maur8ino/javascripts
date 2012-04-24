@@ -5,12 +5,8 @@ define(['jquery', 'underscore', 'backbone', 'collections/films', 'views/film', '
 
 			filmListFetched: function() {
 				var dfd = $.Deferred();
-				if (this.filmList.length === 0) {
-					return this.filmList.fetch({dataType: 'jsonp'});
-				} else {
-					dfd.resolve();
-					return dfd.promise();
-				}
+				dfd.resolve();
+				return this.filmList.length === 0 ? this.filmList.fetch({dataType: 'jsonp'}) : dfd.promise();
 			},
 
 			initialize: function(options) {
