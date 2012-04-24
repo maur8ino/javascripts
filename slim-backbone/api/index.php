@@ -31,7 +31,7 @@ function jsonpWrap($jsonp) {
 }
 
 $app->get('/films', function () use ($app) {
-	$sql = "SELECT * FROM `film` ORDER BY RAND( ) LIMIT 10";
+	$sql = "SELECT * FROM `film` LIMIT 10";
 	try {
 		$db = getConnection();
 		$stmt = $db->query($sql);
