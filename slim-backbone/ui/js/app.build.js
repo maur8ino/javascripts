@@ -6,7 +6,7 @@
         jquerymobilerouter:  'libs/jquery-mobile/jquery.mobile.router',
         underscore: 'libs/underscore/underscore-amd',
         backbone: 'libs/backbone/backbone-amd',
-        mustache: 'libs/mustache/mustache-wrap',
+        handlebars: 'libs/handlebars/handlebars-1.0.0.beta.6-amd',
         text: 'libs/require/text',
         order: 'libs/require/order',
         templates: '../templates'

@@ -1,6 +1,6 @@
 // Filename: router.js
-define(['jquery', 'underscore', 'backbone', 'collections/films', 'views/film', 'views/filmDetail', 'views/filmList', 'search'],
-	function($, _, Backbone, filmCollection, filmView, filmDetailView, filmListView, $search){
+define(['jquery', 'underscore', 'backbone', 'collections/films', 'views/film', 'views/filmDetail', 'views/filmList', 'search', 'jquery_scrollto'],
+	function($, _, Backbone, FilmCollection, filmView, FilmDetailView, FilmListView, $search, jqst){
 		var AppRouter = Backbone.Router.extend({
 
 			filmListFetched: function() {
@@ -10,7 +10,7 @@ define(['jquery', 'underscore', 'backbone', 'collections/films', 'views/film', '
 			},
 
 			initialize: function(options) {
-				this.filmList = new filmCollection();
+				this.filmList = new FilmCollection();
 			},
 
 			routes: {
@@ -22,7 +22,7 @@ define(['jquery', 'underscore', 'backbone', 'collections/films', 'views/film', '
 			list: function () {
 				var that = this;
 				this.filmListFetched().done(function() {
-					that.filmListView = new filmListView({ model: that.filmList });
+					that.filmListView = new FilmListView({ model: that.filmList });
 					$('#container').html(that.filmListView.render().el);
 				});
 			},
@@ -34,14 +34,15 @@ define(['jquery', 'underscore', 'backbone', 'collections/films', 'views/film', '
 						that.list();
 					}
 					that.filmDetails = that.filmList.get(id);
-					that.filmDetailView = new filmDetailView({ model: that.filmDetails });
+					that.filmDetailView = new FilmDetailView({ model: that.filmDetails });
 					$('#containerDetail').html(that.filmDetailView.render().el);
+					$.scrollTo('#containerDetail', {duration: 800});
 				});
 			},
 			getSearch: function(name) {
 				var that = this,
-					filmCollectionSearch = filmCollection.extend({url: "../api/film/search/" + name});
-				this.filmList = new filmCollectionSearch();
+					FilmCollectionSearch = FilmCollection.extend({url: "../api/film/search/" + name});
+				this.filmList = new FilmCollectionSearch();
 				$search.val(unescape(name));
 				$search.css('background', 'red');
 				this.filmListFetched().done(function() {

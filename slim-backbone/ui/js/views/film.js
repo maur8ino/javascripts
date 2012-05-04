@@ -1,11 +1,6 @@
 // Filename: views/projects/list
-define([
-	'jquery',
-	'underscore',
-	'backbone',
-	'mustache',
-	'text!templates/film/item.html'
-	], function($, _, Backbone, Mustache, filmItem){
+define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!templates/film/item.html'
+	], function($, _, Backbone, Handlebars, filmItem){
 		var filmView = Backbone.View.extend({
 			tagName: 'li',
 			attributes: function () {
@@ -13,8 +8,9 @@ define([
 					return { 'data-film_id' : this.model.id };
 				}
 			},
+			template: Handlebars.compile(filmItem),
 			render: function(eventName) {
-				this.$el.html(Mustache.render(filmItem, this.model.toJSON()));
+				this.$el.html(this.template(this.model.toJSON()));
 				return this;
 			}
 		});

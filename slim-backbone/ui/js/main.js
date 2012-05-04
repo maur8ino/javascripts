@@ -6,11 +6,10 @@
 require.config({
 	paths: {
 		jquery: 'libs/jquery/jquery-min',
-		jquerymobile: 'libs/jquery-mobile/jquery.mobile-1.1.0',
-		jquerymobilerouter:  'libs/jquery-mobile/jquery.mobile.router',
+		jquery_scrollto: 'libs/jquery/plugins/jquery.scrollTo-1.4.2',
 		underscore: 'libs/underscore/underscore-amd',
 		backbone: 'libs/backbone/backbone-amd',
-		mustache: 'libs/mustache/mustache-wrap',
+		handlebars: 'libs/handlebars/handlebars-1.0.0.beta.6-amd',
 		text: 'libs/require/text',
 		order: 'libs/require/order',
 		templates: '../templates'
