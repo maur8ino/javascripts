@@ -1,4 +1,0 @@
-syntax: glob
-modular-backbone-updated/build/*
-backbone-requirejs-example/*
-jasmine-test2/*
