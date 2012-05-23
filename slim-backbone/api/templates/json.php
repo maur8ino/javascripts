@@ -33,7 +33,7 @@ class JsonView extends Slim_View {
 			$return_string .= ']';
 	
 			// Count
-			$return_string .= ($this->data['include_item_count'] ? ', "count": "'.count($object).'"' : '');
+			$return_string .= ((array_key_exists('include_item_count', $this->data) && $this->data['include_item_count']) ? ', "count": "'.count($object).'"' : '');
 
 			// End of the json/jsonp object
 			$return_string .= '}';
