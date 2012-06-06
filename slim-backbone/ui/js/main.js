@@ -6,10 +6,6 @@
 require.config({
 	paths: {
 		jquery: 'libs/jquery/jquery-min',
-		jquery_scrollto: 'libs/jquery/plugins/jquery.scrollTo-1.4.2',
-		underscore: 'libs/underscore/underscore-amd',
-		backbone: 'libs/backbone/backbone-amd',
-		handlebars: 'libs/handlebars/handlebars-1.0.0.beta.6-amd',
 		ember: 'libs/ember/ember-0.9.8.1',
 		text: 'libs/require/text',
 		templates: '../templates'
