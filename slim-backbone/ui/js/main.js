@@ -10,6 +10,7 @@ require.config({
 		underscore: 'libs/underscore/underscore-amd',
 		backbone: 'libs/backbone/backbone-amd',
 		handlebars: 'libs/handlebars/handlebars-1.0.0.beta.6-amd',
+		ember: 'libs/ember/ember-0.9.8.1',
 		text: 'libs/require/text',
 		templates: '../templates'
 	}

@@ -1,8 +1,8 @@
 // Filename: app.js
-define(['router'],
-	function(Router) {
+define(['jquery', 'ember'],
+	function($, Ember) {
 
-	var initialize = function(){
+/*	var initialize = function(){
 		// Pass in our Router module and call it's initialize function
 		Router.initialize();
 	};
@@ -10,4 +10,12 @@ define(['router'],
 	return {
 		initialize: initialize
 	};
+*/
+	var App = Em.Application.create({
+		VERSION: '0.2-omfg'
+	});
+
+	return { initialize: function() {
+		window.App = App;
+	}};
 });
