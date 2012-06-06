@@ -25,7 +25,7 @@ $app->get('/films', function () use ($app) {
 	$app->render('json.php', $data); 
 }); 
 
-$app->get('/film/search/:title', function ($title) use ($app) {
+$app->get('/films/search/:title', function ($title) use ($app) {
 	$title_decoded = urldecode($title);
 	$data['title'] = 'films';
 	$data['object'] = Film::all(array('conditions' => array("title LIKE CONCAT('%',?,'%')", $title_decoded)));
@@ -33,7 +33,7 @@ $app->get('/film/search/:title', function ($title) use ($app) {
 	$app->render('json.php', $data); 
 }); 
 
-$app->get('/film/:id', function ($id) use ($app) {
+$app->get('/films/:id', function ($id) use ($app) {
 	$data['object'] = Film::find($id);
 	$app->render('json.php', $data); 
 });

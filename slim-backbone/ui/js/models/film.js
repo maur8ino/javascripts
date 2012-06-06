@@ -1,6 +1,5 @@
 define([
-	'underscore',
-	'backbone'
-], function(_, Backbone) {
-	return Backbone.Model.extend();
+	'ember'
+], function() {
+	return Ember.Object.create();
 });
