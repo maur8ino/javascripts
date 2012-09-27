@@ -2,19 +2,19 @@
 
 /* Controllers */
 
-function PhoneListCtrl($scope, $http) {
-  $http.get('phones/phones.json').success(function(data) {
-    $scope.phones = data;
-  });
+/* Controllers */
+function FilmList($scope, $http) {
+	$http.get('/movie.api/films').success(function(data) {
+		$scope.films = data.films;
+	});
 
-  $scope.orderProp = 'age';
+	$scope.filterFunction = function(object) {
+		return (!$scope.filmSearch || $scope.filmSearch === '' || object.title.toUpperCase().indexOf($scope.filmSearch.toUpperCase()) === 0);
+	};
 }
 
-//PhoneListCtrl.$inject = ['$scope', '$http'];
-
-
-function PhoneDetailCtrl($scope, $routeParams) {
-  $scope.phoneId = $routeParams.phoneId;
+function FilmDetail($scope, $routeParams, $http) {
+	$http.get('/movie.api/films/' + $routeParams.filmId).success(function(data) {
+		$scope.film = data;
+	});
 }
-
-//PhoneDetailCtrl.$inject = ['$scope', '$routeParams'];

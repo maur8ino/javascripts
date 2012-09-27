@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app>
+<html lang="en" ng-app="films">
 <head>
 	<meta charset="utf-8">
 	<title>Angular sandbox</title>
@@ -7,15 +7,10 @@
 	<link rel="stylesheet" href="css/bootstrap.css">
 	<script src="lib/angular/angular.js"></script>
 	<script src="js/app.js"></script>
+	<script src="js/controllers.js"></script>
 </head>
 <body>
-	<div id="searchBox">
-		<form>
-			<input id="search" /><label for="search"></label>
-		</form>
-	</div>
-	<div id="container" ng-controller="FilmList">
-		<a ng-repeat="film in films" href="#/film/{{film.film_id}}">{{film.title}}</a>
+	<div ng-view>
 	</div>
 </body>
 </html>

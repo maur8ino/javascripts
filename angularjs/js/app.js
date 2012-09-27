@@ -1,11 +1,8 @@
-'use strict';
 
-/* Controllers */
-
-function FilmList($scope, $http) {
-	$http.get('/movies.api/films').success(function(data) {
-		$scope.films = data.films;
-	});
-}
-
-//PhoneListCtrl.$inject = ['$scope', '$http'];
+angular.module('films', [])
+	.config(['$routeProvider', function($routeProvider) {
+		$routeProvider
+			.when('/films', { templateUrl: 'partials/film-list.html', controller: FilmList })
+			.when('/films/:filmId', { templateUrl: 'partials/film-detail.html', controller: FilmDetail })
+			.otherwise({ redirectTo: '/films' });
+	}]);
